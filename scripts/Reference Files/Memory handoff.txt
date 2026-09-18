@@ -1,0 +1,670 @@
+AI Director 2.x Conversation Handoff
+Narrative Director, Scene Manager, Memory Architecture, and Narrative Enrichment Status
+September 2026
+Project Overview
+
+We are working on the AI Director 2.x architecture for Foundry VTT.
+
+The long-term goal is:
+
+Scene Manager
+        ↓
+Narrative Director
+        ↓
+Narrative Enrichment
+        ↓
+Map Architect
+        ↓
+Scene Sector Planner
+        ↓
+Building Program Planner
+        ↓
+Architectural Manifest Builder
+        ↓
+Cartographer
+        ↓
+Scene Record Builder
+        ↓
+Sector Writer
+        ↓
+Entity Planner
+        ↓
+Spatial Anchor Planner
+        ↓
+Token Placement Planner
+        ↓
+Entity Spawner
+        ↓
+Panorama Forge
+
+
+Core principle:
+
+Narrative is Canon.
+Everything downstream implements narrative.
+Nothing downstream rewrites narrative.
+
+Original Investigation
+
+We began because Narrative Director was throwing validation errors during Scene Generation.
+
+Observed error:
+
+Narrative validation failed:
+
+Missing title
+Missing premise
+Missing currentSituation
+Narrative missing scene introduction
+Narrative contains no objectives or player goals
+
+Files Investigated
+scene-manager.js
+
+Function:
+
+executeSceneGeneration()
+
+
+Contains:
+
+NarrativeDirector.generateNarrative(...)
+
+narrative-director.js
+
+Contains:
+
+generateNarrative()
+normalizeNarrative()
+validateNarrative()
+
+
+Narrative schema includes:
+
+title
+premise
+history
+currentSituation
+occupancyState
+
+genreProfile
+themeProfile
+toneProfile
+
+sceneIntroduction
+
+factions
+dangers
+mysteries
+
+objectives
+obstacles
+revelations
+rewards
+storyHooks
+
+playerGoals
+
+
+Narrative Director validates these successfully.
+
+narrative-prompts.js
+
+Prompt properly requests:
+
+{
+  "title": "",
+  "premise": "",
+  "history": "",
+  "currentSituation": "",
+  "occupancyState": "",
+  "genreProfile": "",
+  "themeProfile": "",
+  "toneProfile": "",
+  "sceneIntroduction": {},
+  "factions": [],
+  "dangers": [],
+  "mysteries": [],
+  "objectives": [],
+  "obstacles": [],
+  "revelations": [],
+  "rewards": [],
+  "storyHooks": [],
+  "playerGoals": []
+}
+
+
+Prompt itself appears architecturally correct.
+
+Critical Diagnostic Work Performed
+Initial Discovery
+
+normalizeNarrative() was receiving:
+
+{
+  story: "...",
+  playerAgency: "...",
+  gmNotes: "..."
+}
+
+
+instead of:
+
+{
+  title,
+  premise,
+  currentSituation,
+  sceneIntroduction,
+  objectives,
+  ...
+}
+
+
+This suggested schema mismatch.
+
+Breakthrough Test
+
+Direct call:
+
+await NarrativeDirector.testNarrative(
+  "Explore an abandoned mine"
+);
+
+
+Result:
+
+SUCCESS
+
+
+Returned:
+
+{
+  title: "The Mines of Memory",
+  premise: "...",
+  history: "...",
+  currentSituation: "...",
+  ...
+}
+
+
+This proved:
+
+Narrative Director works.
+Prompt works.
+Validation works.
+Normalization works.
+
+Scene Manager Bypass Investigation
+
+User concern:
+
+Maybe Scene Manager is bypassing Narrative Director entirely.
+
+
+We tested this.
+
+Installed breakpoint:
+
+window.AIDirector
+  .NarrativeDirector
+  .generateNarrative =
+  async function (...args) {
+
+      debugger;
+
+      return await original.apply(
+        this,
+        args
+      );
+  };
+
+
+Pressed Generate Scene.
+
+DevTools halted inside:
+
+NarrativeDirector.generateNarrative()
+
+
+Call stack:
+
+director-app.js
+      ↓
+scene-manager.js
+      ↓
+NarrativeDirector.generateNarrative()
+
+
+Conclusion:
+
+Narrative Director IS being invoked.
+
+Scene Manager is NOT bypassing Narrative Director.
+
+
+This was conclusively proven.
+
+Current Architecture Assessment
+
+Current:
+
+Scene Manager
+    Reads canon journal
+    Reads memory journal
+    Builds context
+    Calls Narrative Director
+
+
+Target:
+
+Scene Manager
+    Orchestrates only
+
+Narrative Director
+    Owns narrative context
+    Owns continuity
+    Owns canon
+    Owns memory retrieval
+
+Major Discovery
+Huge Context Payload
+
+Diagnostics added:
+
+console.log(
+  canonLore.length
+);
+
+console.log(
+  memoryLore.length
+);
+
+
+Observed:
+
+canonLore = 36,074 chars
+memoryLore = 44,276 chars
+
+
+Total:
+
+80,000+ characters
+
+
+Narrative Director worked perfectly without this.
+
+Narrative Director failed when fed these huge journals.
+
+This became the strongest lead.
+
+Architectural Pivot
+
+During discussion the real issue emerged.
+
+Not:
+
+Narrative generation
+
+
+but:
+
+Memory architecture
+
+Key Learning
+Campaign History != Campaign Memory
+
+Current journals contain:
+
+Scene descriptions
+Sector descriptions
+Room descriptions
+Atmospheric details
+Manifest exports
+Generation logs
+
+
+Example:
+
+Room was dusty.
+Cobwebs on walls.
+Dim lighting.
+Broken archway.
+
+
+Those facts are not useful in scene 40.
+
+Example That Drove Design
+
+Scenario:
+
+Scene 2
+
+Players help a blacksmith.
+
+
+Scene 40:
+
+Players need armor repaired.
+
+
+AI should remember:
+
+Blacksmith
+Relationship
+Favor owed
+Location
+
+
+AI should NOT remember:
+
+Cobwebs in corner
+Lighting conditions
+Floor debris
+
+Proposed Conceptual Memory Model
+Layer 1
+
+Active Narrative Memory
+
+Contains:
+
+Current objectives
+Current threats
+Current mysteries
+Current arc
+Current factions
+
+
+Small.
+
+Always loaded.
+
+Layer 2
+
+Entity Memory
+
+Contains:
+
+NPCs
+Locations
+Organizations
+Relationships
+Obligations
+
+
+Example:
+
+{
+  "name": "Garrick Ironhand",
+  "role": "Blacksmith",
+  "owedFavor": true,
+  "relationship": "Friendly"
+}
+
+
+Persists forever.
+
+Layer 3
+
+Campaign Archive
+
+Contains:
+
+Everything
+
+
+Journal history.
+
+Recaps.
+
+Scene records.
+
+Manifests.
+
+Not loaded automatically.
+
+Only searched when necessary.
+
+Very Important Insight
+
+The project may already contain memory infrastructure.
+
+Files identified:
+
+memory-manager.js
+rag-engine.js
+recap-manager.js
+journal-compiler.js
+state-store.js
+short-term-telemetry.js
+
+
+We paused implementation because we do NOT yet know whether:
+
+Memory system is missing
+
+
+or
+
+Memory system already exists but Narrative Director is not using it
+
+
+Current belief:
+
+The second is more likely.
+
+Next Investigation
+
+Before changing Scene Manager or Narrative Director:
+
+Audit these files:
+
+memory-manager.js
+rag-engine.js
+recap-manager.js
+
+
+Questions:
+
+memory-manager.js
+
+Investigate:
+
+What gets stored?
+How is memory summarized?
+How is memory persisted?
+
+rag-engine.js
+
+Investigate:
+
+What gets indexed?
+How is retrieval performed?
+Can entities be retrieved?
+
+recap-manager.js
+
+Investigate:
+
+Does it already create compressed campaign summaries?
+Can Narrative Director use these?
+
+Narrative Enrichment Roadmap Status
+Phase 1
+
+Narrative Director Expansion
+
+COMPLETE
+
+
+Added:
+
+objectives
+revelations
+obstacles
+rewards
+storyHooks
+
+Phase 2
+
+Scene Introduction Layer
+
+COMPLETE
+
+
+Added:
+
+sceneIntroduction
+
+Phase 3
+
+Narrative Opportunity Planning
+
+COMPLETE
+
+
+Added:
+
+narrativeOpportunities
+
+Phase 4
+
+Genre Anchoring
+
+COMPLETE
+
+
+Added:
+
+genreProfile
+themeProfile
+toneProfile
+
+Phase 5
+
+Sector Narrative Roles
+
+COMPLETE
+
+
+Roles:
+
+ATMOSPHERE
+DISCOVERY
+CLUE
+REWARD
+OBJECTIVE
+OPTIONAL
+
+Phase 6
+
+Sector Content Assignment
+
+MOSTLY COMPLETE
+
+
+Known follow-up:
+
+Obstacle distribution weaker than clue/reward distribution.
+
+Phase 7
+
+Occupancy Intent
+
+NOT STARTED
+
+
+Planned:
+
+occupancyIntent: {
+  activityLevel: "",
+  controlLevel: "",
+  knownHazards: "",
+  factionPresence: ""
+}
+
+
+Files:
+
+narrative-prompts.js
+narrative-director.js
+architectural-manifest-builder.js
+
+Phase 8
+
+Validation Expansion
+
+NOT STARTED
+
+
+Planned:
+
+Objective requires:
+    clue
+    obstacle
+    reward
+
+Require:
+    scene introduction
+    atmosphere
+    objective
+    genre profile
+
+Phase 9
+
+Scene Manager Refactor
+
+BLOCKED
+
+
+Reason:
+
+Need memory architecture decision first.
+
+Most Important Conclusions
+Proven
+Narrative Director works.
+
+Narrative Director is called by Scene Manager.
+
+Scene Manager does not bypass Narrative Director.
+
+Prompt contract is generally correct.
+
+Suspected
+Narrative Director is consuming too much historical context.
+
+Memory architecture should be solved before major new generation work.
+
+Existing memory systems likely already provide much of what is needed.
+
+First Message For New Chat
+
+Paste this:
+
+We were working on AI Director 2.x architecture.
+
+Narrative Director has been proven to work in isolation through NarrativeDirector.testNarrative().
+
+Debugger testing proved Scene Manager does not bypass Narrative Director.
+
+The major architectural concern is memory management.
+
+Current scene generation injects approximately:
+
+canonLore = 36k chars
+memoryLore = 44k chars
+
+into Narrative Director.
+
+We believe the project has existing memory infrastructure:
+memory-manager.js
+rag-engine.js
+recap-manager.js
+
+Before continuing Narrative Enrichment Phase 7 (Occupancy Intent) we want to audit the existing memory architecture and determine whether Narrative Director should consume curated memory/RAG results instead of raw journals.
+
+Please review this handoff and help continue the memory architecture audit.
+
+
+That should get a new GPT fully oriented in a few minutes instead of having to rediscover everything from scratch.
