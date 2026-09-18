@@ -1,0 +1,26 @@
+<div class="persona-engine-layout">
+  <div class="persona-header">
+    <h3>Character Persona Profile</h3>
+    <div class="active-npc-tag">Editing: {{activeTargetName}}</div>
+  </div>
+
+  <div class="persona-grid">
+    <!-- Left Panel: Radar Chart -->
+    <div class="panel personality-radar">
+      <canvas id="ai-personality-chart"></canvas>
+    </div>
+
+    <!-- Right Panel: The 10-Trait Editor -->
+    <div class="panel traits-editor">
+      <div class="trait-column">
+        {{#each traits}}
+        <div class="trait-slider">
+          <label>{{@key}}</label>
+          <input type="range" name="traits.{{@key}}" min="1" max="10" value="{{this}}">
+          <span class="val-display">{{this}}</span>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</div>

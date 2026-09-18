@@ -1,0 +1,25 @@
+<!-- modules/ai-director/templates/player-scene-injector.hbs -->
+<div class="injector-form-content" style="padding: 10px; display: flex; flex-direction: column; gap: 12px;">
+    <p style="font-size: 0.9rem; color: #555; margin: 0;">
+        Enter details for a player-generated scene. This initializes tracking layers, syncs volume records, and runs the NPC parsing loops.
+    </p>
+
+    <div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+    <label style="font-weight: bold; color: #ffaa00;"><i class="fas fa-user-secret"></i> GM Notes & Background Context</label>
+    <textarea name="gmNotes" rows="4" placeholder="..." style="width: 100%; font-family: sans-serif; resize: vertical; background-color: white; color: black;"></textarea>
+</div>
+
+<div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+    <label style="font-weight: bold; color: #44aaff;"><i class="fas fa-users-cog"></i> NPC Blueprints (JSON Array Format)</label>
+    <textarea name="npcJson" rows="4" style="width: 100%; font-family: monospace; font-size: 0.85rem; resize: vertical; background-color: white; color: black;">{{defaultNpcJson}}</textarea>
+</div>
+
+<div class="form-group" style="display: flex; flex-direction: column; gap: 4px;">
+    <label style="font-weight: bold; color: #22c55e;"><i class="fas fa-eye"></i> Player Scene (What They Experience)</label>
+    <textarea name="playerScene" rows="5" placeholder="..." style="width: 100%; font-family: sans-serif; resize: vertical; background-color: white; color: black;"></textarea>
+</div>
+
+    <button type="submit" class="submit-btn" style="background: #2b3b4c; color: white; padding: 8px; border: none; cursor: pointer; border-radius: 4px; font-weight: bold;">
+        <i class="fas fa-play"></i> Commit Scene Setup to Pipeline
+    </button>
+</div>

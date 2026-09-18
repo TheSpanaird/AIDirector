@@ -1,0 +1,62 @@
+[
+  {
+    "id": "generic-tavern-evening",
+    "type": "scene-description",
+    "label": "Generic Tavern Evening",
+    "style": "Immersive, sensory, concise, visible details only.",
+    "focus": [
+      "lighting",
+      "sound",
+      "smell",
+      "crowd"
+    ],
+    "lengthDefault": "short",
+    "spoilerPolicy": "Describe only what is immediately perceivable to the players.",
+    "speakerName": "Narrator",
+    "tags": [
+      "generic",
+      "fantasy"
+    ]
+  },
+  {
+    "id": "dnd5e-ruined-temple",
+    "type": "scene-description",
+    "label": "D&D5e Ruined Temple",
+    "style": "Ancient, weathered, mysterious, but no hidden reveals.",
+    "focus": [
+      "stonework",
+      "weather",
+      "sound",
+      "scale"
+    ],
+    "lengthDefault": "medium",
+    "spoilerPolicy": "Only describe accessible, visible, and audible details.",
+    "speakerName": "Narrator",
+    "tags": [
+      "generic",
+      "dnd5e",
+      "fantasy"
+    ]
+  },
+  {
+    "id": "cpr-neon-alley",
+    "type": "scene-description",
+    "label": "Cyberpunk RED Neon Alley",
+    "style": "Noir, electric, grimy, cinematic, immediate sensory detail only.",
+    "focus": [
+      "lighting",
+      "rain",
+      "crowd",
+      "tech",
+      "sound"
+    ],
+    "lengthDefault": "short",
+    "spoilerPolicy": "Describe only what the characters can notice right now.",
+    "speakerName": "Narrator",
+    "tags": [
+      "generic",
+      "cyberpunkred",
+      "cyberpunk"
+    ]
+  }
+]

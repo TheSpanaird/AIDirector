@@ -1,0 +1,894 @@
+AI Director 2.1 Roadmap
+Narrative-First World Generation Architecture
+Architectural Archetype Registry Edition (v7)
+Core Philosophy
+
+The original generation architecture attempted to create:
+
+Story
+Map
+Rooms
+NPCs
+Traps
+Loot
+Clues
+Panoramas
+Token Placement
+
+in a single generation step.
+
+The new architecture separates responsibility into deterministic stages.
+
+Scene Manager (Orchestrator)
+        ↓
+Narrative Director
+        ↓
+Map Architect
+        ↓
+Architectural Archetype Classification
+        ↓
+Scene Sector Planner
+        ↓
+Building Program Planner
+        ↓
+Architectural Manifest Builder
+        ↓
+Architectural Grammar
+        ↓
+Cartographer
+        ↓
+Scene Record Builder
+        ↓
+Sector Writer
+        ↓
+Entity Planner
+        ↓
+Spatial Anchor Planner
+        ↓
+Token Placement Planner
+        ↓
+Entity Spawner
+        ↓
+Panorama Forge
+
+
+Each stage solves exactly one problem and outputs structured data for downstream consumers.
+
+Non-Negotiable Design Principles
+1. Narrative Is Canon
+
+Narrative Director produces:
+
+NarrativeRecord
+
+
+containing:
+
+History
+Premise
+Current Situation
+Factions
+Threats
+Mysteries
+Occupancy Story
+Player Goals
+
+No downstream system may contradict narrative canon.
+
+2. Narrative Drift Is Forbidden
+
+Subsystems may:
+
+Expand
+Interpret
+Implement
+
+Subsystems may not:
+
+Rewrite
+Retcon
+Replace
+Contradict
+
+canonical narrative.
+
+3. Regeneration Must Be Local
+Bad Map?
+    Regenerate Map
+
+Bad Sector?
+    Regenerate Sector
+
+Bad Entity?
+    Regenerate Entity
+
+Bad Placement?
+    Regenerate Placement
+
+
+without affecting:
+
+Lore
+History
+Factions
+Mysteries
+Narrative
+4. Structured Data Over Prose
+
+Every stage outputs:
+
+Machine-readable structured data
+
+
+No subsystem should scrape generated prose.
+
+5. Manifest Is The System Source Of Truth
+Core Discovery
+
+The Architectural Manifest becomes the canonical handoff layer between:
+
+Narrative
+        ↓
+Planning
+        ↓
+Geometry
+        ↓
+Entities
+
+
+The Manifest owns:
+
+Structure Type
+Scene Archetype
+Room Program
+Floor Program
+Topology
+Connectivity
+Occupancy Intent
+Vertical Access
+Ventilation Networks
+Special Features
+Detached Buildings
+Open Areas
+
+No downstream system may invent or infer these independently.
+
+6. Architectural Single Source Of Truth
+Layout Profiles = Architectural Archetypes
+
+A Layout Profile is not a map.
+
+A Layout Profile is:
+
+Architectural Doctrine
+Classification Metadata
+Structural Intent
+Sector Doctrine
+Building Program Doctrine
+
+A Layout Profile is not:
+
+A Floorplan
+A Blueprint
+A Generated Map
+Architectural Registry Flow
+LayoutProfileLibrary
+        ↓
+Map Architect
+        ↓
+Scene Sector Planner
+        ↓
+Building Program Planner
+        ↓
+Architectural Manifest Builder
+        ↓
+Architectural Grammar
+        ↓
+Cartographer
+
+
+No subsystem may independently redefine:
+
+CASTLE
+FORTRESS
+FACILITY
+SPACE_STATION
+TEMPLE
+PRISON
+HOSPITAL
+SPACEPORT
+7. AI Work Must Be Partitioned
+
+Hermes 3 is a bounded-context model.
+
+Large facilities must be generated through deterministic passes.
+
+No AI subsystem should generate:
+
+All Sectors
+All Descriptions
+All NPCs
+All Loot
+All Clues
+All Anchors
+
+in a single prompt.
+
+Generation must be partitioned into:
+
+Narrative Pass
+        ↓
+Architectural Pass
+        ↓
+Manifest Pass
+        ↓
+Sector Passes
+        ↓
+Entity Passes
+        ↓
+Anchor Passes
+
+
+Benefits:
+
+Smaller Prompts
+Lower Hallucination Rate
+Better Determinism
+Better Regeneration
+Better Scaling
+Reduced Scene Manager Complexity
+8. One Stage, One Responsibility
+
+Every subsystem answers one question.
+
+Narrative Director
+    What happened?
+
+Map Architect
+    What kind of place is this?
+
+Scene Sector Planner
+    What sectors exist?
+
+Building Program Planner
+    How is the structure organized?
+
+Architectural Manifest Builder
+    How is everything connected?
+
+Architectural Grammar
+    How should this be interpreted architecturally?
+
+Cartographer
+    What geometry should exist?
+
+Scene Record Builder
+    What information is tracked per sector?
+
+Sector Writer
+    What is this sector like?
+
+Entity Planner
+    What exists here?
+
+Spatial Anchor Planner
+    What is everything doing?
+
+Token Placement Planner
+    Where does everything go?
+
+
+No stage should answer multiple responsibilities simultaneously.
+
+Scene Manager Philosophy Revision
+New Rule
+
+Scene Manager Is Not A Generation System
+
+Scene Manager owns:
+
+Workflow Coordination
+Pipeline Execution
+State Passing
+Progress Reporting
+Regeneration Control
+Persistence Orchestration
+Failure Recovery
+
+
+Scene Manager does NOT own:
+
+Narrative
+Architectural Planning
+Manifest Generation
+Content Generation
+Entity Planning
+Geometry
+Placement
+
+Target End State
+SceneManager.generate()
+
+        ↓
+
+NarrativeDirector
+
+        ↓
+
+MapArchitect
+
+        ↓
+
+ManifestBuilder
+
+        ↓
+
+SceneRecordBuilder
+
+        ↓
+
+SectorWriter
+
+        ↓
+
+EntityPlanner
+
+        ↓
+
+SpatialAnchorPlanner
+
+        ↓
+
+TokenPlacementPlanner
+
+        ↓
+
+EntitySpawner
+
+        ↓
+
+PanoramaForge
+
+
+Scene Manager becomes a pure orchestration layer.
+
+Architectural Independence Achieved
+
+Adding a new archetype now requires:
+
+1. Create Profile
+        ↓
+2. Optional Alias
+        ↓
+3. Done
+
+
+Only create a new grammar when a genuinely new geometric generation style is required.
+
+Examples:
+
+TEMPLE
+PRISON
+HOSPITAL
+SPACEPORT
+UNDERWATER_CITY
+ARCOLOGY
+
+should not require modification to:
+
+Map Architect
+Scene Sector Planner
+Building Program Planner
+Cartographer
+
+if an existing grammar can build them.
+
+Phase 1: Narrative Director
+Status
+
+✅ Active
+
+Produces
+NarrativeRecord
+
+Authority
+Lore
+History
+Occupancy
+Factions
+Threats
+Mysteries
+Motivations
+Phase 2: Map Architect
+Status
+
+✅ Implemented
+
+Produces
+ArchitecturalPlan
+
+Answers
+What kind of place is this?
+Which archetype fits best?
+Which grammar should build it?
+How large is it?
+How many floors?
+
+Produces:
+
+Candidate Profiles
+Ranked Profiles
+Best Profile
+
+Phase 2.5: Architectural Archetype Registry
+Status
+
+✅ Implemented
+
+File
+layout-profile-library.js
+
+Responsibility
+
+Authoritative source of all architectural knowledge.
+
+PROFILE_SCHEMA_V3
+
+✅ Implemented
+
+Includes:
+
+displayName
+description
+aliases
+classificationTags
+grammar
+envelope
+targetSectorCounts
+requiredSectors
+optionalSectors
+floorRange
+corridorPattern
+footprintShape
+entranceCount
+emergencyExitCount
+secondaryNetworks
+Phase 3: Scene Sector Planner
+Status
+
+✅ Registry Driven
+
+Produces:
+
+SectorPlan
+
+
+Determines:
+
+Required Sectors
+Optional Sectors
+Sector Counts
+Sector Doctrine
+Phase 4: Building Program Planner
+Status
+
+✅ Registry Driven
+
+Produces:
+
+BuildingProgram
+
+
+Determines:
+
+Floor Counts
+Entrances
+Vertical Cores
+Emergency Exits
+Corridor Patterns
+Secondary Networks
+Phase 5: Architectural Manifest Builder
+Status
+
+⏳ Active Priority
+
+Produces
+{
+  "floors": [],
+  "sectors": [],
+  "connections": [],
+  "detachedBuildings": [],
+  "openAreas": [],
+  "verticalConnections": [],
+  "perimeterSystems": []
+}
+
+Authority
+Topology
+Connectivity
+Adjacency
+Structure Relationships
+Vertical Access
+Ventilation
+Detached Building Relationships
+Goal
+
+Move topology ownership out of:
+
+Scene Manager
+Architectural Grammars
+Phase 5.5: Scene Manager Decomposition
+Status
+
+⏳ Immediate Priority
+
+Purpose
+
+Extract ownership from Scene Manager.
+
+New Services
+Manifest Builder
+Scene Record Builder
+Journal Publisher
+Scene Activator
+
+Goal
+
+Reduce Scene Manager to orchestration only.
+
+Phase 6: Architectural Grammar
+Status
+
+✅ Implemented
+
+Consumes:
+
+ArchitecturalManifest
+
+
+Responsible for:
+
+Architectural Interpretation
+
+
+Not:
+
+Narrative Generation
+
+Phase 7: Cartographer
+Status
+
+✅ Implemented
+
+Authority Over:
+
+Geometry
+Rooms
+Corridors
+Walls
+Doors
+Rendering
+
+Never Owns:
+
+Narrative
+Lore
+Occupancy
+Topology
+Entity Decisions
+Cartographer Freeze Policy
+
+Future enhancements should primarily focus on:
+
+Stability
+Validation
+Rendering Improvements
+
+Major planning responsibilities should not migrate into Cartographer.
+
+Phase 8: Scene Record Builder
+Status
+
+⏳ New
+
+Produces
+SceneRecord
+
+Authority
+Sector Metadata
+Record Normalization
+Prompt Defaults
+Player View Prompt Structure
+GM Notes Structure
+Goal
+
+Remove record normalization logic from Scene Manager.
+
+Phase 9: Sector Writer
+Status
+
+⏳ Planned
+
+Consumes
+NarrativeRecord
+ArchitecturalManifest
+SceneRecord
+Single Sector
+Produces
+{
+  "sensoryDescription": "",
+  "playerViewPrompt": "",
+  "gmNotes": "",
+  "clues": []
+}
+
+Rule
+
+One AI pass per sector.
+
+Never an entire facility.
+
+Phase 10: Entity Planner
+Status
+
+⏳ Planned
+
+Produces
+EntityPlan
+
+
+Determines:
+
+NPCs
+Creatures
+Loot
+Interactables
+Clues
+Traps
+
+Never Determines:
+
+Geometry
+Coordinates
+Placement
+Phase 11: Spatial Anchor Planner
+Status
+
+⏳ Planned
+
+Produces:
+
+SEATED_AT
+PATROLLING
+WORKING_AT
+WATCHING
+SLEEPING_IN
+GUARDING
+USING
+
+
+relationships.
+
+Anchors never create entities.
+
+Phase 12: Token Placement Planner
+Status
+
+⏳ Planned
+
+Consumes:
+
+Geometry
+EntityPlan
+AnchorPlan
+
+Produces:
+
+PlacementPlan
+
+
+with final coordinates.
+
+Phase 13: Entity Spawner
+Status
+
+✅ Implemented
+
+Creates:
+
+Actors
+Tokens
+Variants
+
+Consumes:
+
+PlacementPlan
+
+Phase 14: Panorama Forge
+Status
+
+✅ Implemented
+
+Consumes:
+
+playerViewPrompt
+
+
+Produces:
+
+Panoramas
+
+Current Sprint Roadmap
+Sprint 13
+Manifest Builder + Scene Manager Decomposition
+
+Deliverables:
+
+Architectural Manifest Builder
+Manifest Contract
+Manifest Validation
+Scene Record Builder Extraction
+Scene Manager Responsibility Reduction
+
+Goal:
+
+Manifest becomes canonical source of truth.
+
+Sprint 14
+Sector Writer
+
+Deliverables:
+
+Single-Sector Prompt Contract
+Sector Content Generation
+Sector Regeneration
+
+Goal:
+
+Remove sector content generation from Scene Manager.
+
+Sprint 15
+Entity Planner
+
+Deliverables:
+
+EntityPlan Contract
+Occupancy Planner
+Loot Planner
+Clue Planner
+
+Goal:
+
+Remove entity planning from Scene Manager.
+
+Sprint 16
+Spatial Anchor Planner
+
+Deliverables:
+
+AnchorPlan Contract
+Activity Generation
+Behavior Relationships
+
+Goal:
+
+Separate activities from entity creation.
+
+Sprint 17
+Token Placement Planner
+
+Deliverables:
+
+PlacementPlan Contract
+Coordinate Solver
+Geometry Integration
+
+Goal:
+
+Separate placement from generation.
+
+Long-Term Goal
+Scene Manager Reduction
+
+Current:
+
+Scene Manager
+=
+Generation Monolith
+
+
+Target:
+
+Scene Manager
+=
+Pipeline Orchestrator
+
+
+Responsibilities:
+
+Workflow Coordination
+Progress Tracking
+State Passing
+Persistence Management
+Regeneration Management
+
+Nothing More.
+
+Ultimate Goal
+Create Profile
+        ↓
+Done
+
+
+Adding:
+
+TEMPLE
+PRISON
+HOSPITAL
+SPACEPORT
+CITY
+REGION
+UNDERWATER_CITY
+ARCOLOGY
+MEGASTRUCTURE
+
+should require modifications to:
+
+layout-profile-library.js
+
+
+only,
+
+unless a genuinely new geometric grammar is required.
+
+The Architectural Archetype Registry remains the sole source of architectural truth.
+
+ARCHITECTURAL DISCOVERY
+-----------------------
+
+FortifiedSiteGrammar currently
+contains mixed responsibilities.
+
+Semantic Architecture:
+- detachedBuildings
+- openAreas
+- keepAccessRoute
+- population structures
+- wall systems
+
+Geometry:
+- cells
+- polygons
+- wall coordinates
+
+Long-term direction:
+
+Move semantic architecture into
+ArchitecturalManifest.
+
+Leave geometry generation inside
+FortifiedSiteGrammar.
+
+SPRINT 13 DISCOVERY
+-------------------
+
+ArchitecturalManifestBuilder
+must remain archetype-agnostic.
+
+It must not contain:
+
+- Castle logic
+- Temple logic
+- Prison logic
+- Hospital logic
+- Spaceport logic
+
+LayoutProfileLibrary remains
+the architectural source of truth.
+
+Architectural Grammars remain
+the geometry source of truth.
+
+ManifestBuilder assembles
+canonical planning data and
+topology contracts between the two.

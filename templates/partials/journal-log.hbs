@@ -1,0 +1,27 @@
+<!-- modules/ai-director/templates/partials/journal-log.hbs -->
+<div class="journal-log-layout animate-fade-in">
+  <div class="persona-header">
+    <h3>Session Journal</h3>
+    <p class="subtext">Chronicle of events and narrative milestones.</p>
+  </div>
+
+  <!-- 📜 THE AUTOMATED LOG DISPLAY STREAM -->
+  <div class="journal-stream">
+    {{#each journalEntries}}
+      <div class="journal-entry">
+        <span class="entry-timestamp">{{this.timestamp}}</span>
+        <p class="entry-text">{{this.content}}</p>
+      </div>
+    {{else}}
+      <div class="empty-state">No journal entries recorded for this session.</div>
+    {{/each}}
+  </div>
+
+  <!-- ✍️ QUICK RECORD NOTE ENTRY MATRIX -->
+  <div class="journal-input">
+    <textarea name="journal-note" placeholder="Record a narrative milestone..."></textarea>
+    <button type="button" class="btn-primary" data-action="save-entry">
+      <i class="fas fa-save"></i> Save Entry
+    </button>
+  </div>
+</div>

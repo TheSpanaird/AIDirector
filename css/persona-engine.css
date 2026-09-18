@@ -1,0 +1,298 @@
+/* ==========================================================================
+   AI Director - Global Tab Theme Mapping
+   ========================================================================== */
+
+/* Apply the gold/tan accent color to all major tab and section headings */
+.persona-grid h2,
+.npc-relation-hub .hub-title,
+.chaos-matrix-tab .hub-title,
+.sheet-tabs .item.active {
+  color: #d2bd56 !important;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Global Table Headers: Applied across all tabs for consistent contrast */
+.persona-grid th,
+.npc-relation-hub .relation-table th,
+.sheet-body th {
+  color: #d6d6d6 !important;
+  font-weight: bold;
+}
+
+/* Secondary Labels/Subtexts: Force legible charcoal gray globally across tabs */
+.persona-grid .subtext,
+.npc-relation-hub .subtext,
+.chaos-matrix-tab .subtext,
+.npc-relation-hub .faction-tier,
+.npc-relation-hub .slider-percentage,
+.npc-relation-hub .hostility-line,
+.trait-slider .val-display,
+.status-subtext {
+  color: #323531 !important;
+  font-weight: 600; /* Slightly bolder for peak scannability against dark rows */
+}
+
+
+/* ==========================================================================
+   AI Director - Core Persona Layout Rules
+   ========================================================================== */
+
+.persona-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px; 
+}
+
+.trait-column { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+}
+
+.trait-slider { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+}
+
+.trait-slider label { 
+  /* Legible gold on light gray backgrounds */
+  color: #a68a00; 
+  font-weight: bold; 
+  width: 110px; 
+  font-size: 0.85rem;
+}
+
+.trait-slider input { 
+  flex: 1; 
+  accent-color: #a68a00;
+}
+
+.val-display { 
+  width: 25px; 
+  text-align: right; 
+  font-family: monospace;
+}
+
+
+/* ==========================================================================
+   AI Director - Relation Hub Structural Layout
+   ========================================================================== */
+
+.npc-relation-hub .relation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.npc-relation-hub th, .npc-relation-hub td {
+  padding: 10px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* Gray out structural dropdown inputs slightly to indicate locking mechanism */
+.npc-relation-hub select[disabled] {
+  opacity: 0.85;
+  color: var(--color-text-dark, #333);
+  cursor: not-allowed;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+}
+
+.npc-relation-hub .action-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.npc-relation-hub .icon-btn {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+
+/* ==========================================================================
+   AI Director - Slider Grid Layout Center Alignment
+   ========================================================================== */
+
+.npc-relation-hub .trust-cell {
+  text-align: center;
+}
+
+/* Shared structural wrapper to ensure chaos rows and relation cells match widths */
+.npc-relation-hub .slider-container,
+.chaos-row .slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Horizontally centers slider track and text label */
+  justify-content: center;
+  margin: 0 auto;    /* Centers the entire container inside the table cell/row */
+  width: 140px;
+}
+
+/* Force the percentage text to be perfectly centered beneath the slider track */
+.npc-relation-hub .slider-percentage,
+.chaos-row .slider-percentage {
+  display: block;
+  text-align: center;
+  width: 100%;
+  margin-top: 4px;
+}
+
+
+/* ==========================================================================
+   AI Director - Custom Skeuomorphic Slider Styling (All Tabs)
+   ========================================================================== */
+
+/* Target paths expanded to fix collapsed inputs inside the Chaos Matrix tab layout */
+.npc-relation-hub .relation-slider,
+.chaos-row .relation-slider,
+#edit-trust,
+.persona-grid input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* --- The Slider Track Background --- */
+.npc-relation-hub .relation-slider::-webkit-slider-runnable-track,
+.chaos-row .relation-slider::-webkit-slider-runnable-track,
+#edit-trust::-webkit-slider-runnable-track,
+.persona-grid input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 14px;
+  background: linear-gradient(to bottom, #bdbebd 0%, #dcdcdc 30%, #f0f0f0 100%);
+  border-top: 1px solid #7a7a7a;
+  border-left: 1px solid #7a7a7a;
+  border-bottom: 2px solid #fcfcfc;
+  border-right: 2px solid #fcfcfc;
+  box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.4), 1px 2px 3px rgba(0, 0, 0, 0.15);
+  border-radius: 1px;
+}
+
+.npc-relation-hub .relation-slider::-moz-range-track,
+.chaos-row .relation-slider::-moz-range-track,
+#edit-trust::-moz-range-track,
+.persona-grid input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 14px;
+  background: linear-gradient(to bottom, #bdbebd 0%, #dcdcdc 30%, #f0f0f0 100%);
+  border-top: 1px solid #7a7a7a;
+  border-left: 1px solid #7a7a7a;
+  border-bottom: 2px solid #fcfcfc;
+  border-right: 2px solid #fcfcfc;
+  box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.4);
+  border-radius: 1px;
+}
+
+/* --- The Pointed / Beveled Slider Thumb --- */
+.npc-relation-hub .relation-slider::-webkit-slider-thumb,
+.chaos-row .relation-slider::-webkit-slider-thumb,
+#edit-trust::-webkit-slider-thumb,
+.persona-grid input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -5px; /* Centers thumb vertically on track */
+  height: 22px;
+  width: 12px;
+  background: #dcdcdc;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%);
+  border: 1px solid #999;
+  box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.3), inset 1px 1px 1px #fff;
+}
+
+.npc-relation-hub .relation-slider::-moz-range-thumb,
+.chaos-row .relation-slider::-moz-range-thumb,
+#edit-trust::-moz-range-thumb,
+.persona-grid input[type="range"]::-moz-range-thumb {
+  box-sizing: border-box;
+  height: 22px;
+  width: 12px;
+  background: #dcdcdc;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%);
+  border: 1px solid #999;
+  border-radius: 0;
+}
+
+/* Ensure disabled controls don't alter layout dimensions */
+.npc-relation-hub .relation-slider:disabled {
+  opacity: 0.9;
+  cursor: default;
+}
+
+
+/* ==========================================================================
+   AI Director - Chaos Matrix Panel Layout & Theme Styling
+   ========================================================================== */
+
+.chaos-control-panel {
+  background: #4a4c4f; /* Matches the dark-row row baseline theme */
+  border: 1px solid #323531;
+  border-radius: 4px;
+  padding: 15px;
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.chaos-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 10px;
+}
+
+.chaos-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.chaos-label {
+  color: #d6d6d6 !important; /* Matches table header grayscale */
+  font-weight: bold;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+/* Align percentages & slider widths to relationship tab */
+.chaos-row .slider-container {
+  width: 150px;
+}
+
+.chaos-row .slider-percentage {
+  color: #d2bd56 !important; /* High contrast gold accent text for matrix tracking values */
+  font-weight: bold;
+}
+
+/* Theme match the action button block */
+.chaos-action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.chaos-btn {
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: 1px solid #323531;
+  background: #f5f5f5;
+  color: #323531;
+  transition: all 0.2s ease;
+}
+
+.chaos-btn:hover {
+  background: #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.chaos-btn i {
+  margin-right: 5px;
+}

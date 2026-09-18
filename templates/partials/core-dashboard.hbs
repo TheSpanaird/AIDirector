@@ -1,0 +1,69 @@
+<div class="player-interface-layout">
+  <div class="dashboard-controls-wrapper full-width-pane">
+    <div class="tool-ribbon">
+      <button type="button" data-action="recap"><i class="fas fa-history"></i> Recap</button>
+      <button type="button" data-action="scene"><i class="fas fa-clapperboard"></i> Scene</button>
+      <button type="button" data-action="npc"><i class="fas fa-robot"></i> NPC</button>
+      <button type="button" data-action="clear"><i class="fas fa-trash"></i> Clear</button>
+    </div>
+
+    <div class="control-matrix">
+      <div class="status-bar">
+        <label class="switch-container">
+          <input type="checkbox" id="ai-director-autonomous-toggle" name="autonomousDirector" {{#if autonomousDirector}}checked{{/if}}>
+          <span>Director</span>
+        </label>
+        <button type="button" class="btn-history" data-action="history"><i class="fas fa-history"></i> History</button>
+      </div>
+      <div class="status-subtext">Autonomous Director: Active/Standby</div>
+
+      <div class="input-inline-row">
+        <div class="form-group">
+          <label>Mode</label>
+          <select name="mode">
+            {{#each modes}}<option value="{{this}}">{{this}}</option>{{/each}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Answer As</label>
+          <select name="answer-as">
+            {{#each answerAs}}<option value="{{this}}">{{this}}</option>{{/each}}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prompt-stream-container full-width-pane">
+    <div class="stream-header">
+      <span>Prompt Output Log</span>
+      <i class="fas fa-compress-arrows-alt"></i>
+    </div>
+    <div class="stream-output"><p class="placeholder-text">AI Director Responses...</p></div>
+  </div>
+
+  <div class="chat-input-vertical-stack full-width-pane">
+    <textarea name="chat-input" placeholder="Instruct the Director or insert narrative beats..."></textarea>
+    <button type="button" class="btn-send-block" data-action="send"><span>Send</span></button>
+    <div class="instance-footer yellow-accent">hermes3 Instance Online</div>
+  </div>
+
+  <div class="director-action-modifiers full-width-pane" hidden>
+    <div class="modifier-row">
+      <div class="form-group">
+        <label>ENFORCED OVERRIDE SKILL</label>
+        <select name="actionSkill">
+          <option value="N/A">None (Let AI Decide)</option>
+          {{#if isCPR}}<option value="Facedown">Facedown</option>{{/if}}
+          {{#each systemSkills}}<option value="{{this.id}}">{{this.name}}</option>{{/each}}
+        </select>
+      </div>
+      <div class="form-group check-inline-group">
+        <label class="checkbox-container">
+          <input type="checkbox" name="secretCheck">
+          <span>SECRET CHECK (BLIND)</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

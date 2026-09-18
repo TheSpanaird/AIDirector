@@ -1,0 +1,171 @@
+{{!-- modules/ai-director/templates/partials/dungeon-ledger.hbs --}}
+<div class="dungeon-ledger-container" style="padding: 10px; display: flex; flex-direction: column; gap: 12px; height: 100%; overflow-y: auto;">
+  <div class="ledger-top-bar" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 8px 12px; border: 1px solid var(--color-border-dark); border-radius: 4px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <i class="fas fa-dungeon" style="color: #ffaa00; font-size: 1.2rem;"></i>
+      <h3 style="margin: 0; color: #ffaa00; text-transform: uppercase; font-size: 1rem; font-weight: bold;">
+        {{#if activeDungeon.dungeonTitle}}{{activeDungeon.dungeonTitle}}{{else}}Active Dungeon Manifest{{/if}}
+      </h3>
+    </div>
+
+    <button type="button" class="reveal-toggle-btn" data-action="toggle-master-reveal" style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: {{#if isMasterRevealed}}#7c2d12{{else}}#1e293b{{/if}}; color: #fff; border: 1px solid var(--color-border-dark); border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+      <i class="fas {{#if isMasterRevealed}}fa-lock-open{{else}}fa-lock{{/if}}"></i>
+      <span>{{#if isMasterRevealed}}🔒 Mask Master Data{{else}}🔓 Reveal Master Data{{/if}}</span>
+    </button>
+  </div>
+
+  {{#if activeDungeon.sectors}}
+    <div class="sectors-list" style="display: flex; flex-direction: column; gap: 10px;">
+      {{#each activeDungeon.sectors}}
+        <div class="sector-card" data-sector-id="{{this.sectorId}}" style="background: rgba(0,0,0,0.15); border: 1px solid var(--color-border-dark); border-radius: 4px; padding: 10px; position: relative;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; margin-bottom: 8px;">
+            <span style="font-weight: bold; color: #00bfff; font-size: 0.95rem;">
+              Sector: {{#if this.displayName}}{{this.displayName}}{{else}}{{this.name}}{{/if}} <small style="color: #888; font-weight: normal;">({{this.sectorId}})</small>
+            </span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button
+                type="button"
+                class="sector-regenerate-btn"
+                data-sector-id="{{this.sectorId}}">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                Regen
+              </button>
+              <button
+                type="button"
+                class="sector-regenerate-guided-btn"
+                data-sector-id="{{this.sectorId}}">
+                <i class="fas fa-route"></i>
+                Guided
+              </button>
+            </div>
+            <span style="font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; color: #aaa;">
+              Exits: {{#each this.adjacentSectors}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 8px;">
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #ffaa00; text-transform: uppercase;">Area State</label>
+              <input type="text" class="sector-inline-field" data-field="areaState" value="{{this.areaState}}" style="width:100%; font-size:0.8rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px;" />
+            </div>
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #ffaa00; text-transform: uppercase;">Sector Type</label>
+              <input type="text" class="sector-inline-field" data-field="sectorType" value="{{this.sectorType}}" style="width:100%; font-size:0.8rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px;" />
+            </div>
+            <div>
+              <label style="font-size: 0.7rem; font-weight: bold; color: #ffaa00; text-transform: uppercase;">Mundane Allowed</label>
+              <select class="sector-inline-field" data-field="mundaneAllowed" style="width:100%; font-size:0.8rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px;">
+                <option value="false" {{#unless this.mundaneAllowed}}selected{{/unless}}>No</option>
+                <option value="true" {{#if this.mundaneAllowed}}selected{{/if}}>Yes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 8px;">
+            <label style="font-size: 0.75rem; font-weight: bold; color: #ffaa00; text-transform: uppercase;">Sensory Atmosphere</label>
+            <textarea class="sector-inline-field" data-field="sensoryDescription" rows="2" style="width: 100%; font-size: 0.85rem; background: rgba(0,0,0,0.2); color: var(--color-text-light); border: 1px solid var(--color-border-light-2); border-radius: 3px; resize: vertical;">{{this.sensoryDescription}}</textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 8px;">
+            <label style="font-size: 0.75rem; font-weight: bold; color: #38bdf8; text-transform: uppercase;">Player-view Panorama Prompt</label>
+            <textarea class="sector-inline-field" data-field="playerViewPrompt" rows="2" style="width: 100%; font-size: 0.8rem; background: rgba(0,0,0,0.2); color: var(--color-text-light); border: 1px solid var(--color-border-light-2); border-radius: 3px; resize: vertical;">{{this.playerViewPrompt}}</textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 8px;">
+            <label style="font-size: 0.75rem; font-weight: bold; color: #38bdf8; text-transform: uppercase;">Tactical Map Prompt</label>
+            <textarea class="sector-inline-field" data-field="tacticalMapPrompt" rows="2" style="width: 100%; font-size: 0.8rem; background: rgba(0,0,0,0.2); color: var(--color-text-light); border: 1px solid var(--color-border-light-2); border-radius: 3px; resize: vertical;">{{this.tacticalMapPrompt}}</textarea>
+          </div>
+
+          <div class="blinded-secrets-block {{#unless @root.isMasterRevealed}}masked-secret-blur{{/unless}}" style="{{#unless @root.isMasterRevealed}}filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.5; transition: all 0.2s ease;{{/unless}} display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+              <div>
+                <label style="font-size: 0.75rem; font-weight: bold; color: #ff4a4a; text-transform: uppercase;">Inhabitants JSON / Lines</label>
+                <textarea class="sector-inline-field" data-field="inhabitants" rows="4" style="width:100%; font-size:0.75rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px; resize:vertical;">{{this.__ledgerFields.inhabitants}}</textarea>
+              </div>
+              <div>
+                <label style="font-size: 0.75rem; font-weight: bold; color: #ff4a4a; text-transform: uppercase;">Monsters JSON / Lines</label>
+                <textarea class="sector-inline-field" data-field="monsters" rows="4" style="width:100%; font-size:0.75rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px; resize:vertical;">{{this.__ledgerFields.monsters}}</textarea>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+              <div><label style="font-size:0.7rem; font-weight:bold; color:#eab308; text-transform:uppercase;">Traps</label><textarea class="sector-inline-field" data-field="traps" rows="3" style="width:100%; font-size:0.72rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px; resize:vertical;">{{this.__ledgerFields.traps}}</textarea></div>
+              <div><label style="font-size:0.7rem; font-weight:bold; color:#eab308; text-transform:uppercase;">Secrets</label><textarea class="sector-inline-field" data-field="secrets" rows="3" style="width:100%; font-size:0.72rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px; resize:vertical;">{{this.__ledgerFields.secrets}}</textarea></div>
+              <div><label style="font-size:0.7rem; font-weight:bold; color:#eab308; text-transform:uppercase;">Clues</label><textarea class="sector-inline-field" data-field="clues" rows="3" style="width:100%; font-size:0.72rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px; resize:vertical;">{{this.__ledgerFields.clues}}</textarea></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+              <div><label style="font-size:0.7rem; font-weight:bold; color:#a78bfa; text-transform:uppercase;">Loot</label><textarea class="sector-inline-field" data-field="loot" rows="3" style="width:100%; font-size:0.72rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px; resize:vertical;">{{this.__ledgerFields.loot}}</textarea></div>
+              <div><label style="font-size:0.7rem; font-weight:bold; color:#a78bfa; text-transform:uppercase;">Interactables</label><textarea class="sector-inline-field" data-field="interactables" rows="3" style="width:100%; font-size:0.72rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px; resize:vertical;">{{this.__ledgerFields.interactables}}</textarea></div>
+              <div><label style="font-size:0.7rem; font-weight:bold; color:#a78bfa; text-transform:uppercase;">Legacy Encounters</label><textarea class="sector-inline-field" data-field="encounters" rows="3" style="width:100%; font-size:0.72rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px; resize:vertical;">{{this.__ledgerFields.encounters}}</textarea></div>
+            </div>
+
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold; color: #a78bfa; text-transform: uppercase;">Rewards</label>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                {{#each this.rewards}}
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 3px; color: var(--color-text-light);">
+                    <span>
+                      <strong>{{this.reward.title}}</strong>
+                      — {{this.reward.rewardType}}
+                      {{#if this.placementType}}
+                        <span style="color:#888; font-size:0.7rem;">
+                          [{{this.placementType}}]
+                        </span>
+                      {{/if}}
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                      <span style="font-size: 0.7rem; text-transform: uppercase; color: {{#if this.revealed}}#22c55e{{else}}#888{{/if}};">
+                        {{this.reward.rewardState}}
+                      </span>
+                      <button
+                        type="button"
+                        class="reward-discover"
+                        data-sector-id="{{../sectorId}}"
+                        data-reward-id="{{this.reward.rewardId}}"
+                      >
+                        Discover
+                      </button>
+                      <button
+                        type="button"
+                        class="reward-claim"
+                        data-sector-id="{{../sectorId}}"
+                        data-reward-id="{{this.reward.rewardId}}"
+                      >
+                        Claim
+                      </button>
+                      <button
+                        type="button"
+                        class="reward-resolve"
+                        data-sector-id="{{../sectorId}}"
+                        data-reward-id="{{this.reward.rewardId}}"
+                      >
+                        Resolve
+                      </button>
+                    </span>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold; color: #eab308; text-transform: uppercase;">Legacy Traps & Secret DCs</label>
+              <input type="text" class="sector-inline-field" data-field="trapsAndSecrets" value="{{this.trapsAndSecrets}}" style="width:100%; font-size:0.8rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px;" />
+            </div>
+
+            <div>
+              <label style="font-size: 0.75rem; font-weight: bold; color: #f97316; text-transform: uppercase;">GM Notes</label>
+              <textarea class="sector-inline-field" data-field="gmNotes" rows="2" style="width:100%; font-size:0.8rem; background:rgba(0,0,0,0.2); color:var(--color-text-light); border:1px solid var(--color-border-light-2); border-radius:3px; resize:vertical;">{{this.gmNotes}}</textarea>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div style="text-align: center; padding: 40px; color: #888;">
+      <i class="fas fa-scroll" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+      <p>No active dungeon manifest found in <strong>AI Director Memory</strong>.</p>
+      <p style="font-size: 0.85rem;">Use the <strong>Scene</strong> button on the dashboard with a prompt directive to construct a multi-sector manifest.</p>
+    </div>
+  {{/if}}
+</div>

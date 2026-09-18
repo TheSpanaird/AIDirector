@@ -1,0 +1,622 @@
+{
+  "id": "f27ee742-905e-4839-9715-9cde18677887",
+  "revision": 0,
+  "last_node_id": 18,
+  "last_link_id": 33,
+  "nodes": [
+    {
+      "id": 3,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        100,
+        130
+      ],
+      "size": [
+        270,
+        98
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            23
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            24
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            21
+          ]
+        }
+      ],
+      "title": "Load Checkpoint (Lightning)",
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "sdxl_lightning_4step.safetensors"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "KSampler",
+      "pos": [
+        1385.9224609375,
+        130
+      ],
+      "size": [
+        270,
+        262
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 14
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 15
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 16
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "title": "KSampler (Fast Map Render)",
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        791919120815990,
+        "randomize",
+        4,
+        1,
+        "euler",
+        "sgm_uniform",
+        1
+      ]
+    },
+    {
+      "id": 5,
+      "type": "EmptyLatentImage",
+      "pos": [
+        497.450179798265,
+        359.466605829514
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            17
+          ]
+        }
+      ],
+      "title": "2048x2048 Square Latent Canvas",
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        2048,
+        2048,
+        1
+      ]
+    },
+    {
+      "id": 6,
+      "type": "CLIPTextEncode",
+      "pos": [
+        885.9224609375,
+        130
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            15
+          ]
+        }
+      ],
+      "title": "Positive Prompt",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "tactical battlemap, 2D orthographic view, direct 90-degree overhead angle, top-down omniscient perspective, flat ground floor blueprint, completely gridless, seamless environment textures, high quality, crisp detail"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "CLIPTextEncode",
+      "pos": [
+        885.9224609375,
+        460
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            16
+          ]
+        }
+      ],
+      "title": "Negative Prompt",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "bird-eye view, isometric perspective, oblique angle, side-view, 3D render, 3D wall heights, perspective distortion, perspective vanishing point, forced perspective, tilt-shift, depth of field, walls with grids, pre-rendered gridlines, hex pattern, human, characters, text, watermarks, map legend, compass, UI, status icons, mini-map, blurry, low resolution"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [
+        1755.9224609375,
+        130
+      ],
+      "size": [
+        140,
+        46
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 20
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            22,
+            25
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 9,
+      "type": "SaveImage",
+      "pos": [
+        2090.1755033915247,
+        -58.81116639818661
+      ],
+      "size": [
+        270,
+        270
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 22
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "title": "Save WebP Map",
+      "properties": {},
+      "widgets_values": [
+        "AI_Director_Map"
+      ]
+    },
+    {
+      "id": 10,
+      "type": "LoraLoader",
+      "pos": [
+        495.484375,
+        130
+      ],
+      "size": [
+        290.4380859375,
+        126
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 23
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 24
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            14
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            18,
+            19
+          ]
+        }
+      ],
+      "title": "Load Mapcraft LoRA",
+      "properties": {
+        "Node name for S&R": "LoraLoader"
+      },
+      "widgets_values": [
+        "mapcraft_sdxl_v1.safetensors",
+        1,
+        1
+      ]
+    },
+    {
+      "id": 11,
+      "type": "Florence2ModelLoader",
+      "pos": [
+        100,
+        594
+      ],
+      "size": [
+        295.484375,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "lora",
+          "shape": 7,
+          "type": "PEFTLORA",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "florence2_model",
+          "type": "FL2MODEL",
+          "links": [
+            26
+          ]
+        }
+      ],
+      "title": "Load Florence-2 Model",
+      "properties": {
+        "Node name for S&R": "Florence2ModelLoader"
+      },
+      "widgets_values": [
+        "Florence-2-base",
+        "fp16",
+        false
+      ]
+    },
+    {
+      "id": 12,
+      "type": "Florence2Run",
+      "pos": [
+        1995.9224609375,
+        318
+      ],
+      "size": [
+        400,
+        364
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 25
+        },
+        {
+          "name": "florence2_model",
+          "type": "FL2MODEL",
+          "link": 26
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": []
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": null
+        },
+        {
+          "name": "caption",
+          "type": "STRING",
+          "links": [
+            33
+          ]
+        },
+        {
+          "name": "data",
+          "type": "JSON",
+          "links": null
+        }
+      ],
+      "title": "Florence-2 Object Detection",
+      "properties": {
+        "Node name for S&R": "Florence2Run"
+      },
+      "widgets_values": [
+        "throne, bar counter, table, door, chair, water pool, pillar, sofa, crate, entrance",
+        "caption_to_phrase_grounding",
+        false,
+        false,
+        1024,
+        3,
+        true,
+        "",
+        73231191543485,
+        "randomize"
+      ]
+    },
+    {
+      "id": 18,
+      "type": "SaveText",
+      "pos": [
+        2468.2976627047524,
+        -68.58304737118137
+      ],
+      "size": [
+        270,
+        170
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 33
+        }
+      ],
+      "outputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveText"
+      },
+      "widgets_values": [
+        "AI_Director_Vision",
+        "txt"
+      ]
+    }
+  ],
+  "links": [
+    [
+      14,
+      10,
+      0,
+      4,
+      0,
+      "MODEL"
+    ],
+    [
+      15,
+      6,
+      0,
+      4,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      16,
+      7,
+      0,
+      4,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      17,
+      5,
+      0,
+      4,
+      3,
+      "LATENT"
+    ],
+    [
+      18,
+      10,
+      1,
+      6,
+      0,
+      "CLIP"
+    ],
+    [
+      19,
+      10,
+      1,
+      7,
+      0,
+      "CLIP"
+    ],
+    [
+      20,
+      4,
+      0,
+      8,
+      0,
+      "LATENT"
+    ],
+    [
+      21,
+      3,
+      2,
+      8,
+      1,
+      "VAE"
+    ],
+    [
+      22,
+      8,
+      0,
+      9,
+      0,
+      "IMAGE"
+    ],
+    [
+      23,
+      3,
+      0,
+      10,
+      0,
+      "MODEL"
+    ],
+    [
+      24,
+      3,
+      1,
+      10,
+      1,
+      "CLIP"
+    ],
+    [
+      25,
+      8,
+      0,
+      12,
+      0,
+      "IMAGE"
+    ],
+    [
+      26,
+      11,
+      0,
+      12,
+      1,
+      "FL2MODEL"
+    ],
+    [
+      33,
+      12,
+      2,
+      18,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1.2438401273068485,
+      "offset": [
+        -620.9816299089399,
+        -14.210528781398766
+      ]
+    },
+    "frontendVersion": "1.45.21"
+  },
+  "version": 0.4
+}

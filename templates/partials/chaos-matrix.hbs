@@ -1,0 +1,50 @@
+<div class="chaos-matrix-wrapper">
+  <div class="hub-header">
+    <h2 class="hub-title">Chaos Matrix</h2>
+    <p class="subtext">Track narrative instability, structural entropy, and random event shifts.</p>
+  </div>
+
+  <div class="chaos-control-panel">
+    
+    <div class="chaos-row">
+      <label class="chaos-label">Chaos Factor (Intensity)</label>
+      <div class="slider-container">
+        <input type="range" class="relation-slider" min="1" max="10" value="{{chaosFactor}}" step="1" name="chaosFactor" />
+        <span class="slider-percentage">{{chaosFactor}}</span>
+      </div>
+    </div>
+
+    <div class="chaos-row">
+      <label class="chaos-label">Factor Entropy Rating</label>
+      <div class="slider-container">
+        <input type="range" class="relation-slider" min="0" max="100" value="{{entropyRating}}" name="entropyRating" />
+        <span class="slider-percentage">{{entropyRating}}%</span>
+      </div>
+    </div>
+
+    <div class="chaos-row">
+      <label class="chaos-label">Instability Index</label>
+      <div class="slider-container">
+        <input type="range" class="relation-slider" min="0" max="100" value="{{instabilityIndex}}" name="instabilityIndex" />
+        <span class="slider-percentage">{{instabilityIndex}}%</span>
+      </div>
+    </div>
+
+    <div class="chaos-row">
+      <label class="chaos-label">Surge Threshold</label>
+      <div class="slider-container">
+        <input type="range" class="relation-slider" min="0" max="100" value="{{surgeThreshold}}" name="surgeThreshold" />
+        <span class="slider-percentage">{{surgeThreshold}}%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chaos-action-buttons">
+    <button type="button" class="chaos-btn action-induce" data-action="pulse">
+      <i class="fas fa-dice"></i> Induce Probability Shift
+    </button>
+    <button type="button" class="chaos-btn action-stabilize" data-action="clear">
+      <i class="fas fa-sync"></i> Stabilize Matrix
+    </button>
+  </div>
+</div>

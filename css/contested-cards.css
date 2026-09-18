@@ -1,0 +1,195 @@
+/* ==========================================================================
+   AI DIRECTOR CONTESTED ROLL LEDGER STYLES
+   ========================================================================== */
+
+.ai-director-card.contested-card {
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: rgba(22, 22, 26, 0.95);
+  margin: 6px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  font-family: "Signika", sans-serif;
+}
+
+/* Header Banner */
+.ai-director-card.contested-card .card-header {
+  background: linear-gradient(90deg, #5c2626 0%, #2a1111 100%);
+  color: #f0f0f0;
+  padding: 6px 10px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #722f2f;
+}
+
+.ai-director-card.contested-card .card-header i {
+  color: #ff5c5c;
+  text-shadow: 0 0 5px rgba(255, 92, 92, 0.6);
+}
+
+/* Card Body Content Layout */
+.ai-director-card.contested-card .card-body {
+  padding: 10px;
+}
+
+.ai-director-card.contested-card .scenario-intent {
+  font-size: 0.9rem;
+  color: #bbb;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.ai-director-card.contested-card .director-rationale {
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid #ff5c5c;
+  padding: 6px 10px;
+  margin: 0 0 12px 0;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: #ddd;
+}
+
+/* The Versus Battle Ledger Frame */
+.ai-director-card.contested-card .contested-ledger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+/* Actor Side Lanes */
+.ai-director-card.contested-card .ledger-lane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.25s ease-in-out;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+}
+
+.ai-director-card.contested-card .actor-label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.ai-director-card.contested-card .skill-tag {
+  font-size: 0.75rem;
+  background: #333;
+  color: #aaa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid #444;
+}
+
+/* Versus Midpoint Divider */
+.ai-director-card.contested-card .ledger-versus {
+  font-weight: 900;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #777;
+  padding: 0 4px;
+  text-shadow: 0 0 4px rgba(0,0,0,0.8);
+}
+
+/* Action Buttons and Displays */
+.ai-director-card.contested-card .roll-contested-btn {
+  background: #1f3d24;
+  border: 1px solid #3b7a44;
+  color: #e0ffe5;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border-radius: 3px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  transition: background 0.15s, transform 0.1s;
+}
+
+.ai-director-card.contested-card .roll-contested-btn:hover:not([disabled]) {
+  background: #2b5733;
+  box-shadow: 0 0 6px rgba(59, 122, 68, 0.5);
+}
+
+.ai-director-card.contested-card .roll-contested-btn:active:not([disabled]) {
+  transform: translateY(1px);
+}
+
+.ai-director-card.contested-card .roll-contested-btn[disabled] {
+  background: #222 !important;
+  border-color: #333 !important;
+  color: #666 !important;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Real-time score totals tracking rendering */
+.ai-director-card.contested-card .roll-score {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffb627;
+  text-shadow: 0 0 6px rgba(255, 182, 39, 0.4);
+  margin-top: 2px;
+}
+
+/* Winner Highlighting Frame State */
+.ai-director-card.contested-card .ledger-lane.winner-highlight {
+  background: rgba(43, 87, 51, 0.15);
+  border-color: rgba(59, 122, 68, 0.4);
+  box-shadow: inset 0 0 8px rgba(59, 122, 68, 0.2);
+}
+
+.ai-director-card.contested-card .ledger-lane.winner-highlight .actor-label {
+  color: #46ff6e;
+  text-shadow: 0 0 8px rgba(70, 255, 110, 0.3);
+}
+
+.ai-director-card.contested-card .ledger-lane.winner-highlight .roll-score.final-score {
+  color: #46ff6e;
+  text-shadow: 0 0 10px rgba(70, 255, 110, 0.6);
+  animation: winner-pulse 1.5s ease-in-out infinite alternate;
+}
+
+/* Narrative prose resolution block */
+.ai-director-card.contested-card .prose-resolution-block hr {
+  border: 0;
+  border-top: 1px dashed #3a3a42;
+  margin: 12px 0 10px 0;
+}
+
+.ai-director-card.contested-card .cinematic-prose-output {
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: #e2e2e8;
+  margin: 0;
+}
+
+.ai-director-card.contested-card .cinematic-prose-output i {
+  color: #7a7a85;
+  margin-right: 4px;
+}
+
+@keyframes winner-pulse {
+  from { transform: scale(1); text-shadow: 0 0 8px rgba(70, 255, 110, 0.5); }
+  to { transform: scale(1.05); text-shadow: 0 0 14px rgba(70, 255, 110, 0.8); }
+}

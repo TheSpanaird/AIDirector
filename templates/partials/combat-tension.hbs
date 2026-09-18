@@ -1,0 +1,38 @@
+<div class="combat-tension-layout">
+  <div class="persona-header">
+    <h3>Combat Tension Monitor</h3>
+    <p class="subtext">Tracking encounter heat and combat-clock status.</p>
+  </div>
+
+  <div class="tension-panel">
+    <!-- Visual Heat Meter -->
+    <div class="heat-meter-container">
+      <label>Encounter Heat</label>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: {{heatLevel}}%;"></div>
+      </div>
+    </div>
+
+    <!-- Countdown Dice Display -->
+    <div class="dice-pool-display">
+      <div class="dice-stat">
+        <span class="dice-label">Active Dice</span>
+        <span class="dice-value">{{activeDiceCount}}</span>
+      </div>
+      <div class="dice-stat">
+        <span class="dice-label">Current Round</span>
+        <span class="dice-value">{{roundCount}}</span>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="tension-actions">
+      <button type="button" class="btn-primary" data-action="roll-tension">
+        <i class="fas fa-dice-six"></i> Roll Countdown
+      </button>
+      <button type="button" class="btn-primary" data-action="reset-tension">
+        <i class="fas fa-undo"></i> Reset
+      </button>
+    </div>
+  </div>
+</div>

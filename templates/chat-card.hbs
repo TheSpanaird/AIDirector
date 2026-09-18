@@ -1,0 +1,173 @@
+/**
+ * AI Director | Chat Card Renderer & Interaction Engine
+ * Handles native Foundry v13 HTML layout generation and chat button hooks.
+ */
+
+export function generateDirectorCardHtml(analysis, shortNarration = "") {
+    const systemId = game?.system?.id || "cpr";
+    const skillName = analysis.skill || "Perception";
+    const statName = analysis.stat || "INT";
+    const targetValue = analysis.suggestedDV || analysis.suggestedDC || 13;
+    const flavorText = shortNarration || 'The current tactical assessment requires immediate interaction...';
+    
+    const checkType = analysis.checkType || "STANDARD"; 
+    const opposingSkill = analysis.opposingSkill || "Evasion";
+
+    const isCPR = systemId.includes("cyberpunk-red") || systemId === "cpr";
+    const metricLabel = isCPR ? "Target DV" : "Target DC";
+    const systemLabel = isCPR ? "Cyberpunk RED" : (systemId === "sw5e" ? "Star Wars 5e" : "D&D 5th Edition");
+
+    let subPanelHtml = `
+        <div style="background: rgba(0, 0, 0, 0.08); border-radius: 3px; padding: 6px; margin-bottom: 10px; border-left: 3px solid var(--color-border-highlight);">
+            <div style="font-size: 0.85em; margin-bottom: 2px;">
+                <strong>Intent Frame:</strong> ${analysis.reasoning || "Action Resolution"}
+            </div>
+            <div style="font-size: 0.85em;">
+                <strong>Required Check:</strong> <span style="font-weight: 600;">${skillName} (${statName})</span>
+            </div>
+        </div>
+        <button class="ai-director-roll-action-btn" 
+                data-check-type="STANDARD"
+                data-skill="${skillName}" 
+                data-stat="${statName}" 
+                data-target="${targetValue}"
+                style="width: 100%; font-family: var(--font-primary); font-weight: bold; background: #2b7a3e; color: #ffffff; border: 1px solid #1e542b; padding: 6px; border-radius: 3px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.2); text-shadow: 1px 1px 0px rgba(0,0,0,0.4);">
+            Execute Prompt Roll (${metricLabel} ${targetValue})
+        </button>
+    `;
+
+    if (checkType === "CONTESTED") {
+        subPanelHtml = `
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <div style="flex: 1; background: rgba(43, 122, 62, 0.1); border-radius: 3px; padding: 6px; border-left: 3px solid #2b7a3e;">
+                <div style="font-size: 0.75em; text-transform: uppercase; opacity: 0.8; font-weight: bold;">Player Check</div>
+                <div style="font-size: 0.9em; font-weight: bold; margin-top: 2px;">${skillName}</div>
+                <div style="font-size: 0.75em; opacity: 0.7;">Base Stat: ${statName}</div>
+            </div>
+            <div style="flex: 1; background: rgba(186, 45, 45, 0.1); border-radius: 3px; padding: 6px; border-left: 3px solid #ba2d2d;">
+                <div style="font-size: 0.75em; text-transform: uppercase; opacity: 0.8; font-weight: bold;">NPC Opponent</div>
+                <div style="font-size: 0.9em; font-weight: bold; margin-top: 2px;">${opposingSkill}</div>
+                <div style="font-size: 0.75em; color: #ba2d2d; font-weight: bold; margin-top: 1px;"><i class="fas fa-eye-slash"></i> Roll Hidden</div>
+            </div>
+        </div>
+        <button class="ai-director-roll-action-btn" 
+                data-check-type="CONTESTED"
+                data-skill="${skillName}" 
+                data-stat="${statName}" 
+                data-opposing-skill="${opposingSkill}"
+                data-target="${targetValue}"
+                style="width: 100%; font-family: var(--font-primary); font-weight: bold; background: #a67c1e; color: #ffffff; border: 1px solid #7a5b13; padding: 6px; border-radius: 3px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.2); text-shadow: 1px 1px 0px rgba(0,0,0,0.4);">
+            Face Contested Challenge
+        </button>
+        `;
+    }
+
+    return `
+    <div class="ai-director-chat-card system-${systemId}" 
+         style="border: 1px solid var(--color-border-dark); background: var(--color-bg); color: var(--color-text-dark); font-family: var(--font-primary); border-radius: 4px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.25);">
+        
+        <div style="background: rgba(0, 0, 0, 0.15); padding: 6px 10px; border-bottom: 1px solid var(--color-border-light-darker); display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; font-size: 0.95em; letter-spacing: 0.3px; color: var(--color-text-hyperlink);">${systemLabel.toUpperCase()} ${checkType}</span>
+            <span style="font-size: 0.8em; opacity: 0.7; font-family: monospace; background: rgba(0,0,0,0.2); padding: 1px 5px; border-radius: 3px;">AI Director</span>
+        </div>
+        
+        <div style="padding: 10px;">
+            <div style="margin-bottom: 8px; font-size: 0.9em; line-height: 1.35; color: var(--color-text-dark);">
+                <em>"${flavorText}"</em>
+            </div>
+            ${subPanelHtml}
+        </div>
+    </div>
+    `;
+}
+
+export function registerChatCardHooks() {
+    // --- FIXED: Updated hook name from renderChatMessageHTML to target core renderChatMessage ---
+    Hooks.on("renderChatMessage", (message, html) => {
+        // Foundry v13 returns a jQuery or raw HTML element wrapper depending on context; find safely
+        const element = html[0] || html;
+        const rollButton = element.querySelector(".ai-director-roll-action-btn");
+        if (!rollButton) return;
+
+        rollButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const contextData = {
+                checkType: rollButton.getAttribute("data-check-type"),
+                skill: rollButton.getAttribute("data-skill"),
+                stat: rollButton.getAttribute("data-stat"),
+                opposingSkill: rollButton.getAttribute("data-opposing-skill"),
+                target: parseInt(rollButton.getAttribute("data-target"), 10)
+            };
+            executeDirectorRoll(contextData);
+        });
+    });
+}
+
+async function executeDirectorRoll(data) {
+    const actor = canvas.tokens?.controlled[0]?.actor || game.user?.character;
+    if (!actor) {
+        return ui.notifications.warn("AI Director | Please select or control a token to execute this check.");
+    }
+
+    const systemId = game.system.id;
+    const isCPR = systemId.includes("cyberpunk-red") || systemId === "cpr";
+    
+    let rollFormula = "";
+    let flavor = "";
+
+    const skillSlug = isCPR 
+        ? data.skill.replace(/[^a-zA-Z0-9\s]/g, "").trim().split(/[\s]+/).map((word, idx) => idx === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join("")
+        : data.skill.toLowerCase().replace(/[^a-z0-9]/g, "_");
+
+    if (data.checkType === "STANDARD") {
+        if (isCPR) {
+            rollFormula = `1d10 + @skills.${skillSlug}.level + @stats.${data.stat.toLowerCase()}.value`;
+        } else {
+            rollFormula = `1d20 + @skills.${skillSlug}.mod`;
+        }
+        flavor = `Executing Forced ${data.skill} Check (vs Target ${data.target})`;
+        
+        const roll = await new Roll(rollFormula, actor.getRollData()).evaluate();
+        await roll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: flavor
+        });
+
+    } else if (data.checkType === "CONTESTED") {
+        let npcFormula = isCPR ? "1d10 + 10" : "1d20 + 4"; 
+        const npcRoll = await new Roll(npcFormula).evaluate();
+        
+        if (isCPR) {
+            rollFormula = `1d10 + @skills.${skillSlug}.level + @stats.${data.stat.toLowerCase()}.value`;
+        } else {
+            rollFormula = `1d20 + @skills.${skillSlug}.mod`;
+        }
+        
+        const playerRoll = await new Roll(rollFormula, actor.getRollData()).evaluate();
+        
+        await playerRoll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: `Contested Challenge: Your ${data.skill} vs NPC ${data.opposingSkill}`
+        });
+
+        const finalNpcTotal = npcRoll.total;
+        const finalPlayerTotal = playerRoll.total;
+        const playerWon = finalPlayerTotal >= finalNpcTotal;
+
+        let resultHtml = `
+            <div style="background: #111; color: #fff; padding: 6px; border-radius: 4px; font-family: monospace; font-size: 0.85em;">
+                <strong>CONTEST RESOLVED:</strong><br>
+                Player Total: ${finalPlayerTotal}<br>
+                NPC Total (${data.opposingSkill}): ${finalNpcTotal}<br>
+                <strong>Outcome:</strong> ${playerWon ? "PLAYER TRIUMPH" : "NPC TRIUMPH"}
+            </div>
+        `;
+
+        await ChatMessage.create({
+            speaker: { alias: "AI Director" },
+            content: resultHtml,
+            whisper: ChatMessage.getWhisperRecipients("GM")
+        });
+    }
+}

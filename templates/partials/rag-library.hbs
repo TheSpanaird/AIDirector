@@ -1,0 +1,37 @@
+<!-- modules/ai-director/templates/partials/rag-library.hbs -->
+<div class="rag-library-layout animate-fade-in">
+  <div class="persona-header">
+    <h3>RAG Knowledge Library</h3>
+    <p class="subtext">Manage the AI's contextual knowledge base.</p>
+  </div>
+
+  <!-- 🎛️ ADMINISTRATIVE CORE MANAGEMENT CONTROLS -->
+  <div class="rag-controls">
+    <button type="button" class="btn-primary" data-action="ingest">
+      <i class="fas fa-file-import"></i> Ingest Journal
+    </button>
+    <button type="button" class="btn-primary" data-action="clear-cache">
+      <i class="fas fa-trash-alt"></i> Clear Memory
+    </button>
+  </div>
+
+  <!-- 🗂️ VECTOR MEMORY CHUNK CONTAINER STREAM -->
+  <div class="rag-content-list">
+    {{#each ragChunks}}
+    <div class="knowledge-chunk" data-chunk-id="{{this.id}}">
+      <div class="chunk-info">
+        <strong>{{this.title}}</strong>
+        <span class="chunk-meta">Vector Distance: {{this.score}} | Updated: {{this.timestamp}}</span>
+      </div>
+      <button type="button" class="btn-sm" data-action="view-chunk" title="Inspect Raw Chunk Strings">
+        <i class="fas fa-eye"></i>
+      </button>
+    </div>
+    {{else}}
+    <div class="empty-state-card">
+      <i class="fas fa-books-medical"></i>
+      <p>No active lore chunks or vectorized journal entities are currently loaded into memory cache slots.</p>
+    </div>
+    {{/each}}
+  </div>
+</div>

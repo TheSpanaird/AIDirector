@@ -1,0 +1,86 @@
+<div class="npc-relation-hub">
+  <!-- Header Section -->
+  <div class="hub-header">
+    <h2 class="hub-title">NPC Relation Hub</h2>
+    <p class="hub-subtitle">Manage influence, trust, and history between key entities.</p>
+  </div>
+
+  <!-- Factions Registry Table -->
+  <table class="relation-table">
+    <thead>
+      <tr>
+        <th>Faction / Entity</th>
+        <th>Sentiment Tier</th>
+        <th>Trust Matrix</th>
+        <th>Faction Standing / Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each factions}}
+      <tr data-faction-id="{{this.id}}">
+        <!-- Faction Profile & Operational Tier -->
+        <td class="faction-profile">
+          <div class="faction-name">{{this.name}}</div>
+          <div class="faction-tier subtext">
+            {{#if this.isMajor}}Major Power{{/if}}
+            {{#if this.isMinor}}Minor Force{{/if}}
+            {{#if this.isMicro}}Micro Cell{{/if}}
+          </div>
+        </td>
+
+        <!-- Sentiment Tier (Read-Only UI Representation) -->
+        <td class="sentiment-cell">
+          <select class="relation-select" disabled>
+            <option value="hostile" {{#if (eq this.sentiment "hostile")}}selected{{/if}}>Hostile</option>
+            <option value="neutral" {{#if (eq this.sentiment "neutral")}}selected{{/if}}>Neutral</option>
+            <option value="allied" {{#if (eq this.sentiment "allied")}}selected{{/if}}>Allied</option>
+          </select>
+        </td>
+
+        <!-- Trust Matrix Slider (Read-Only UI Representation) -->
+        <td class="trust-cell">
+          <div class="slider-container">
+            <input type="range" min="0" max="100" value="{{this.trust}}" class="relation-slider" disabled />
+            <span class="slider-percentage subtext">{{this.trust}}%</span>
+          </div>
+        </td>
+
+        <!-- Matrix Standing Statistics & Hostility Probability -->
+        <td class="standing-cell">
+          <div class="stats-line">
+            <strong>Inf:</strong> {{#if this.influence}}{{this.influence}}{{else}}15{{/if}} | 
+            <strong>Agg:</strong> {{#if this.aggression}}{{this.aggression}}{{else}}30{{/if}}
+          </div>
+          <div class="hostility-line subtext">
+            <strong>Hostility:</strong> {{#if this.hostilityToParty}}{{this.hostilityToParty}}{{else}}0{{/if}}%
+          </div>
+        </td>
+
+        <!-- Action Grid Hooks -->
+        <td class="actions-cell">
+          <div class="action-buttons">
+            <button type="button" class="icon-btn edit-btn" data-action="edit-faction" title="Edit Entity Matrix">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button type="button" class="icon-btn delete-btn" data-action="delete-faction" title="Purge Record">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      {{else}}
+      <tr class="empty-row">
+        <td colspan="5" class="status-subtext text-center">No relational entities registered in local sub-routines.</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <!-- Management Interface Triggers -->
+  <div class="hub-controls">
+    <button type="button" class="action-btn add-connection-btn" data-action="add-faction">
+      <i class="fas fa-plus"></i> Add New Connection
+    </button>
+  </div>
+</div>

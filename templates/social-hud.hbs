@@ -1,0 +1,19 @@
+<!-- templates/social-hud.hbs -->
+<div class="ai-director-hud" style="border: 1px solid var(--color-border-dark); padding: 10px; margin: 10px 0; background: rgba(0,0,0,0.05); border-radius: 4px;">
+    <h4 style="margin: 0 0 5px 0; color: #ffbc00;">AI Director: {{profile.name}}</h4>
+    
+    <div style="font-size: 12px; margin-bottom: 10px;">
+        <strong>Social:</strong> {{profile.relationships.party.disposition}} (Trust: {{profile.relationships.party.trust}}/9)
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px;">
+        <span><strong>Dom:</strong> {{profile.traits.dominance}}</span>
+        <span><strong>Open:</strong> {{profile.traits.openness}}</span>
+        <span><strong>Sec:</strong> {{profile.traits.secrecy}}</span>
+        <span><strong>Agree:</strong> {{profile.traits.agreeableness}}</span>
+    </div>
+
+    <button type="button" class="ai-config-btn" style="margin-top: 8px; width: 100%;">
+        <i class="fas fa-cogs"></i> Open Mindset Controls
+    </button>
+</div>

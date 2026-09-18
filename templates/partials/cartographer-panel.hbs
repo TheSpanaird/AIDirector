@@ -1,0 +1,84 @@
+{{!-- modules/ai-director/templates/partials/cartographer-panel.hbs --}}
+
+<div class="cartographer-panel" data-cartographer-panel>
+  <header class="cartographer-panel__header">
+    <div class="cartographer-panel__title-group">
+      <i class="fas fa-drafting-compass" aria-hidden="true"></i>
+      <div><h2>Cartographer</h2><p>Build and synchronize the active dungeon map.</p></div>
+    </div>
+    <button type="button" class="cartographer-icon-button" data-action="cartographer-refresh" title="Refresh status" aria-label="Refresh status" {{#if cartographer.busy}}disabled{{/if}}><i class="fas fa-rotate" aria-hidden="true"></i></button>
+  </header>
+
+  {{#unless cartographer.isGM}}
+    <section class="cartographer-notice cartographer-notice--error"><i class="fas fa-lock" aria-hidden="true"></i><span>Cartographer controls are available to the GM only.</span></section>
+  {{else}}
+    <section class="cartographer-status-grid" aria-label="Cartographer status">
+      <article class="cartographer-status-card {{#if cartographer.hasScene}}is-ready{{else}}is-missing{{/if}}"><span class="cartographer-status-card__label">Scene</span><strong title="{{cartographer.sceneName}}">{{cartographer.sceneName}}</strong></article>
+      <article class="cartographer-status-card {{#if cartographer.hasManifest}}is-ready{{else}}is-missing{{/if}}"><span class="cartographer-status-card__label">Manifest</span><strong title="{{cartographer.dungeonTitle}}">{{cartographer.dungeonTitle}}</strong></article>
+      <article class="cartographer-status-card {{#if cartographer.generationId}}is-ready{{else}}is-neutral{{/if}}"><span class="cartographer-status-card__label">Generation</span><strong title="{{cartographer.generationId}}">{{#if cartographer.generationId}}{{cartographer.generationId}}{{else}}Not generated{{/if}}</strong><small>Floor {{cartographer.floorNumber}}</small></article>
+    </section>
+
+    {{#unless cartographer.hasScene}}<section class="cartographer-notice cartographer-notice--warning"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i><span>Activate a Foundry scene before using Cartographer.</span></section>{{/unless}}
+    {{#unless cartographer.hasManifest}}<section class="cartographer-notice cartographer-notice--warning"><i class="fas fa-scroll" aria-hidden="true"></i><span>No active Dungeon Manifest was found in AI Director Memory.</span></section>{{/unless}}
+
+    <section class="cartographer-section cartographer-layout-settings">
+      <div class="cartographer-section__heading"><div><h3>Architectural Layout</h3><p>Choose how spaces are packed. Genre and floor appearance remain independent.</p></div></div>
+      <div class="cartographer-option-grid">
+        <label class="cartographer-field cartographer-field--wide"><span>Layout Profile</span><select name="cartographerLayoutProfile" {{#if cartographer.busy}}disabled{{/if}}>{{#each cartographer.layoutProfileOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+        <label class="cartographer-field"><span>Building Scale</span><select name="cartographerArchitecturalScale" {{#if cartographer.busy}}disabled{{/if}}>{{#each cartographer.architecturalScaleOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+      </div>
+      {{#if cartographer.resolvedLayoutProfile}}
+        <div class="cartographer-layout-summary">
+          <span><strong>Profile:</strong> {{cartographer.resolvedLayoutProfile.profileId}}</span>
+          <span><strong>Family:</strong> {{cartographer.resolvedLayoutProfile.layoutFamily}}</span>
+          <span><strong>Scale:</strong> {{cartographer.resolvedLayoutProfile.architecturalScale}}</span>
+          <span><strong>Source:</strong> {{cartographer.resolvedLayoutProfile.source}}</span>
+          <span><strong>Density:</strong> {{cartographer.resolvedLayoutProfile.packingDensity}}</span>
+          <span><strong>Pattern:</strong> {{cartographer.resolvedLayoutProfile.corridorPattern}}</span>
+        </div>
+        {{#if cartographer.resolvedLayoutProfile.description}}<p class="cartographer-layout-description">{{cartographer.resolvedLayoutProfile.description}}</p>{{/if}}
+      {{/if}}
+    </section>
+
+    <section class="cartographer-section">
+      <div class="cartographer-section__heading"><h3>Map Settings</h3></div>
+      <div class="cartographer-option-grid">
+        <label class="cartographer-field"><span>Floor</span><input type="number" name="cartographerFloor" value="{{cartographer.options.floor}}" min="1" step="1" {{#if cartographer.busy}}disabled{{/if}}></label>
+        <label class="cartographer-field"><span>Grid</span><input type="number" name="cartographerGridSize" value="{{cartographer.options.gridSize}}" min="1" step="1" {{#if cartographer.busy}}disabled{{/if}}></label>
+        <label class="cartographer-field"><span>Corridor</span><input type="number" name="cartographerCorridorWidth" value="{{cartographer.options.corridorWidth}}" min="1" step="1" {{#if cartographer.busy}}disabled{{/if}}></label>
+        <label class="cartographer-field"><span>Door Width</span><input type="number" name="cartographerDoorWidth" value="{{cartographer.options.doorWidth}}" min="1" step="1" {{#if cartographer.busy}}disabled{{/if}}></label>
+        <label class="cartographer-field"><span>Door Spacing</span><input type="number" name="cartographerDoorSpacing" value="{{cartographer.options.doorSpacing}}" min="1" step="1" {{#if cartographer.busy}}disabled{{/if}}></label>
+        <label class="cartographer-field"><span>Shared Trunk</span><input type="number" name="cartographerSharedTrunkLength" value="{{cartographer.options.sharedTrunkLength}}" min="1" step="1" {{#if cartographer.busy}}disabled{{/if}}></label>
+        <label class="cartographer-field"><span>Approach</span><input type="number" name="cartographerApproachLength" value="{{cartographer.options.approachLength}}" min="1" step="1" {{#if cartographer.busy}}disabled{{/if}}></label>
+      </div>
+      <div class="cartographer-toggle-grid">
+        <label class="cartographer-toggle"><input type="checkbox" name="cartographerValidateGraph" {{#if cartographer.options.validateGraph}}checked{{/if}} {{#if cartographer.busy}}disabled{{/if}}><span>Validate connections</span></label>
+        <label class="cartographer-toggle"><input type="checkbox" name="cartographerIncludeBoundaryFeatures" {{#if cartographer.options.includeBoundaryFeatures}}checked{{/if}} {{#if cartographer.busy}}disabled{{/if}}><span>Boundary features</span></label>
+        <label class="cartographer-toggle"><input type="checkbox" name="cartographerIncludeDoorState" {{#if cartographer.options.includeDoorState}}checked{{/if}} {{#if cartographer.busy}}disabled{{/if}}><span>Door state</span></label>
+      </div>
+    </section>
+
+    <section class="cartographer-section cartographer-floor-settings">
+      <div class="cartographer-section__heading"><div><h3>Floor Style</h3><p>Automatic by Room selects compatible textures from genre, role, and environment metadata.</p></div></div>
+      <div class="cartographer-option-grid">
+        <label class="cartographer-field cartographer-field--wide"><span>Assignment Mode</span><select name="cartographerAssignmentMode" {{#if cartographer.busy}}disabled{{/if}}>{{#each cartographer.assignmentModeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+        <label class="cartographer-field"><span>Genre</span><select name="cartographerGenre" {{#if cartographer.busy}}disabled{{/if}}>{{#each cartographer.genreOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+        <label class="cartographer-field cartographer-field--wide"><span>Map / Corridor Texture</span><select name="cartographerFloorPreset" {{#if cartographer.busy}}disabled{{/if}}>{{#each cartographer.floorPresetOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+        <label class="cartographer-field"><span>Texture Scale</span><input type="number" name="cartographerTextureScale" value="{{cartographer.options.textureScale}}" min="0.25" max="4" step="0.25" {{#if cartographer.busy}}disabled{{/if}}></label>
+        <label class="cartographer-field"><span>Outline Width</span><input type="number" name="cartographerOutlineWidth" value="{{cartographer.options.outlineWidth}}" min="0" max="12" step="1" {{#if cartographer.busy}}disabled{{/if}}></label>
+        <label class="cartographer-field"><span>Outline Color</span><input type="color" name="cartographerOutlineColor" value="{{cartographer.options.outlineColor}}" {{#if cartographer.busy}}disabled{{/if}}></label>
+      </div>
+      <div class="cartographer-toggle-grid"><label class="cartographer-toggle"><input type="checkbox" name="cartographerOutlineEnabled" {{#if cartographer.options.outlineEnabled}}checked{{/if}} {{#if cartographer.busy}}disabled{{/if}}><span>Show floor outlines</span></label><label class="cartographer-toggle"><input type="checkbox" name="cartographerShowAllFloors" {{#if cartographer.options.showAllFloors}}checked{{/if}} {{#if cartographer.busy}}disabled{{/if}}><span>Show all floor textures</span></label></div>
+      {{#if cartographer.resolvedFloorStyle}}<div class="cartographer-floor-summary"><span><strong>Mode:</strong> {{cartographer.options.assignmentMode}}</span><span><strong>Genre:</strong> {{cartographer.resolvedFloorStyle.genre}}</span><span><strong>Corridor:</strong> {{cartographer.resolvedFloorStyle.preset}}</span><span><strong>Tile size:</strong> {{cartographer.resolvedFloorStyle.texturePixelSize}} px</span></div>{{/if}}
+      {{#if cartographer.roomFloorAssignments}}<div class="cartographer-room-floor-list"><div class="cartographer-room-floor-list__header"><strong>Room Floor Preview</strong><span>Assignments are finalized when the map is generated or rebuilt.</span></div><div class="cartographer-room-floor-grid">{{#each cartographer.roomFloorAssignments}}<article class="cartographer-room-floor-card {{#if this.locked}}is-locked{{/if}}"><div><strong>{{this.name}}</strong><small>{{this.graphRole}} · {{this.sectorId}}</small></div><span class="cartographer-room-floor-card__preset">{{this.preset}}</span><span class="cartographer-room-floor-card__source">{{this.source}}</span></article>{{/each}}</div></div>{{/if}}
+    </section>
+
+    <section class="cartographer-section"><div class="cartographer-section__heading"><h3>Actions</h3></div><div class="cartographer-action-grid"><button type="button" class="cartographer-action-button cartographer-action-button--primary" data-action="cartographer-generate" {{#unless cartographer.canGenerate}}disabled{{/unless}} {{#if cartographer.busy}}disabled{{/if}}><i class="fas fa-wand-magic-sparkles"></i><strong>Generate Map</strong></button><button type="button" class="cartographer-action-button" data-action="cartographer-preview" {{#unless cartographer.canPreview}}disabled{{/unless}} {{#if cartographer.busy}}disabled{{/if}}><i class="fas fa-magnifying-glass-chart"></i><strong>Preview Changes</strong></button><button type="button" class="cartographer-action-button cartographer-action-button--success" data-action="cartographer-sync" {{#unless cartographer.canSync}}disabled{{/unless}} {{#if cartographer.busy}}disabled{{/if}}><i class="fas fa-cloud-arrow-up"></i><strong>Sync to Ledger</strong></button><button type="button" class="cartographer-action-button cartographer-action-button--danger" data-action="cartographer-rebuild" {{#unless cartographer.canRebuild}}disabled{{/unless}} {{#if cartographer.busy}}disabled{{/if}}><i class="fas fa-arrows-rotate"></i><strong>Rebuild Scene</strong></button></div></section>
+
+    <section class="cartographer-operation-status cartographer-operation-status--{{cartographer.statusType}}" aria-live="polite">{{#if cartographer.busy}}<i class="fas fa-spinner fa-spin"></i>{{else if cartographer.lastError}}<i class="fas fa-circle-exclamation"></i>{{else}}<i class="fas fa-circle-info"></i>{{/if}}<span>{{cartographer.status}}</span></section>
+
+    {{#if cartographer.previewSummary}}<section class="cartographer-section cartographer-preview"><div class="cartographer-section__heading"><h3>Detected Changes</h3><span class="cartographer-preview__badge {{#if cartographer.previewSummary.changed}}has-changes{{else}}is-clean{{/if}}">{{#if cartographer.previewSummary.changed}}{{cartographer.previewSummary.total}} changes{{else}}No changes{{/if}}</span></div><div class="cartographer-change-grid"><article><span>Room edits</span><strong>{{cartographer.previewSummary.roomEdits}}</strong></article><article><span>Room floors</span><strong>{{cartographer.previewSummary.roomFloorStyles}}</strong></article><article><span>Rooms added</span><strong>{{cartographer.previewSummary.roomsAdded}}</strong></article><article class="is-destructive"><span>Rooms removed</span><strong>{{cartographer.previewSummary.roomsDeleted}}</strong></article><article><span>Door edits</span><strong>{{cartographer.previewSummary.doorEdits}}</strong></article><article><span>Doors added</span><strong>{{cartographer.previewSummary.doorsAdded}}</strong></article><article class="is-destructive"><span>Doors removed</span><strong>{{cartographer.previewSummary.doorsDeleted}}</strong></article><article><span>Boundary features</span><strong>{{cartographer.previewSummary.boundaryFeatures}}</strong></article><article><span>Missing sectors</span><strong>{{cartographer.previewSummary.missingSectors}}</strong></article></div></section>{{/if}}
+
+    {{#if cartographer.sceneSummary}}<section class="cartographer-section cartographer-generation-summary"><div class="cartographer-section__heading"><h3>Map Summary</h3></div><div class="cartographer-summary-row"><span><strong>{{cartographer.sceneSummary.sectors}}</strong> Rooms</span><span><strong>{{cartographer.sceneSummary.connections}}</strong> Connections</span><span><strong>{{cartographer.sceneSummary.routes}}</strong> Routes</span><span><strong>{{cartographer.sceneSummary.doors}}</strong> Doors</span><span><strong>{{cartographer.sceneSummary.walls}}</strong> Walls</span>{{#if cartographer.sceneSummary.layoutProfile}}<span><strong>{{cartographer.sceneSummary.layoutProfile}}</strong> Profile</span>{{/if}}{{#if cartographer.sceneSummary.architecturalScale}}<span><strong>{{cartographer.sceneSummary.architecturalScale}}</strong> Scale</span>{{/if}}{{#if cartographer.sceneSummary.floorAssignmentMode}}<span><strong>{{cartographer.sceneSummary.floorAssignmentMode}}</strong> Floors</span>{{/if}}</div></section>{{/if}}
+  {{/unless}}
+</div>

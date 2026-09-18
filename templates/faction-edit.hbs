@@ -1,0 +1,43 @@
+<div class="faction-edit-fields" style="padding: 10px; display: flex; flex-direction: column; gap: 12px;">
+  <input type="hidden" name="id" value="{{faction.id}}" />
+
+  <div class="form-group">
+    <label>Faction / Entity Identity Name</label>
+    <input type="text" name="name" value="{{faction.name}}" required />
+  </div>
+
+  <div class="form-group">
+    <label>Sentiment / Influence Tier</label>
+    <select name="tier">
+      {{#select faction.tier}}
+        <option value="major">Major System Force</option>
+        <option value="minor">Minor Regional Force</option>
+        <option value="micro">Micro Sector Cell</option>
+      {{/select}}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Global Influence Level ({{faction.influence}}%)</label>
+    <input type="range" name="influence" min="0" max="100" value="{{faction.influence}}" />
+  </div>
+
+  <div class="form-group">
+    <label>Aggression Matrix Rating ({{faction.aggression}}%)</label>
+    <input type="range" name="aggression" min="0" max="100" value="{{faction.aggression}}" />
+  </div>
+
+  <div class="form-group">
+    <label>Trust / Hostility Standing ({{faction.hostilityToParty}}%)</label>
+    <input type="range" name="hostilityToParty" min="0" max="100" value="{{faction.hostilityToParty}}" />
+  </div>
+
+  <div class="form-group">
+    <label>Description Narrative Notes</label>
+    <textarea name="description" rows="3">{{faction.description}}</textarea>
+  </div>
+
+  <button type="submit" class="save-faction-btn" style="margin-top: 5px; background: #2a4d7c; color: white;">
+    <i class="fas fa-save"></i> Save Configuration Changes
+  </button>
+</div>
