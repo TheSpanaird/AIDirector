@@ -1,0 +1,26 @@
+{
+  "id": "ai-director",
+  "title": "AI Director",
+  "version": "0.2.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "css/ai-director.css",
+    "css/persona-engine.css",
+    "css/contested-cards.css",
+    "css/cartographer.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "templates": []
+}
